@@ -1,0 +1,48 @@
+{
+  "name": "handoffx",
+  "version": "0.1.0",
+  "description": "An open, portable context handoff protocol for AI agents.",
+  "type": "module",
+  "bin": {
+    "handoffx": "./src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/cli.js",
+    "test": "node --test",
+    "test:bun": "bun test",
+    "check": "node --test && node src/cli.js --help"
+  },
+  "engines": {
+    "node": ">=20",
+    "bun": ">=1.1"
+  },
+  "files": [
+    "src/",
+    "schema/",
+    "examples/",
+    "docs/",
+    "SPEC.md",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ammend/handoffX.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ammend/handoffX/issues"
+  },
+  "homepage": "https://github.com/ammend/handoffX#readme",
+  "keywords": [
+    "ai-agent",
+    "handoff",
+    "protocol",
+    "a2a",
+    "markdown",
+    "multi-agent"
+  ],
+  "license": "Apache-2.0"
+}

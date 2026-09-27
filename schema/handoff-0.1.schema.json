@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ammend/handoffX/schema/handoff-0.1.schema.json",
+  "title": "handoffX 0.1 Handoff Metadata",
+  "type": "object",
+  "required": ["handoffx", "kind", "handoff_id", "revision", "subject", "created_at", "updated_at", "status", "depends_on"],
+  "properties": {
+    "handoffx": { "const": "0.1" },
+    "kind": { "const": "handoff" },
+    "handoff_id": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "subject": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["draft", "offered", "closed"] },
+    "producer": { "type": "string", "minLength": 1 },
+    "audience": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "depends_on": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "previous_sha256": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+  },
+  "additionalProperties": true
+}
