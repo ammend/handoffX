@@ -1,0 +1,4 @@
+interface:
+  display_name: "handoffX"
+  short_description: "Create and review portable AI agent handoffs"
+  default_prompt: "Use $handoffx to create or review a portable context handoff for this task."

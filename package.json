@@ -1,6 +1,6 @@
 {
   "name": "handoffx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An open, portable context handoff protocol for AI agents.",
   "type": "module",
   "bin": {
@@ -21,6 +21,7 @@
     "schema/",
     "examples/",
     "docs/",
+    "skills/",
     "SPEC.md",
     "README.md",
     "CHANGELOG.md",

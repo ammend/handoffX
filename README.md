@@ -54,6 +54,16 @@ npm install -g github:ammend/handoffX
 node src/cli.js --help
 ```
 
+## Install the Agent Skill
+
+The repository includes a transport-independent `handoffx` skill for Agent environments that support the open skills directory format:
+
+```bash
+npx skills add ammend/handoffX -y -g
+```
+
+The skill can create and review handoffs with or without the CLI. It keeps installation optional for receivers and does not send artifacts unless the user separately authorizes delivery.
+
 ## Create an offer
 
 ```bash

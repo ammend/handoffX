@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 — 2026-09-27
+
+- Add the installable `handoffx` Agent Skill.
+- Guide producer, receiver, relay, revision, multi-receiver, and zero-install workflows.
+- Include a compact 0.1 protocol reference for agents that do not invoke the CLI.
+
 ## 0.1.0 — 2026-09-27
 
 - Define the transport-independent handoffX 0.1 protocol.
