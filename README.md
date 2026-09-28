@@ -1,89 +1,112 @@
 # handoffX
 
-**An open, portable context handoff protocol for AI agents.**
+**Your AI agent clocked out without writing a handoff.**
 
-handoffX carries the minimum sufficient context needed to continue work across agent, session, owner, platform, or infrastructure boundaries.
+[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
-```text
-Producer offers Markdown
-  → receiver reads it with zero required tooling
-  → receiver accepts or asks concrete questions
-  → producer issues a complete new revision
-  → each receiver independently accepts an exact revision
-```
+At 2 a.m., Agent A spends forty minutes investigating an incident. It rules out the database, finds two critical logs, and confirms one thing: **do not restart the primary database**.
 
-The protocol is transport-independent. Markdown files can move through filesystems, chat attachments, email, issue trackers, HTTP, shared whiteboards, MCP resources, or A2A artifacts. None is a dependency.
+Then its session ends.
 
-## Why handoffX?
+Agent B receives 800 chat messages, repeats a failed command, reopens an old theory, and finally asks: “What problem are we solving?”
 
-AI agents are often stateless and isolated from one another. Copying a chat transcript transfers noise but does not establish what is known, what was tried, why decisions were made, or whether the receiver has enough context to continue.
+Both agents are capable. The handoff failed.
 
-handoffX adds:
+> A chat transcript is surveillance footage, not a shift report.
 
-- a canonical, human-readable Markdown artifact;
-- receiver-driven clarification instead of producer guesswork;
-- independent responses from B, C, D, or any number of receivers;
-- revisions bound to exact prior bytes with SHA-256;
-- zero-install receiving: only the producer needs tooling;
-- a portable fallback across otherwise incompatible agent systems.
+handoffX is an open, portable, Markdown-native context handoff protocol for AI agents. It carries the minimum sufficient context needed to continue work across agent, session, owner, platform, or infrastructure boundaries.
 
-## Protocol
+## From Matt Pocock's Handoff
 
-Read the normative [handoffX 0.1 specification](SPEC.md).
+handoffX is inspired by Matt Pocock's definition of [Handoff](https://github.com/mattpocock/dictionary-of-ai-coding/blob/main/dictionary/Handoff.md) in the [Dictionary of AI Coding](https://github.com/mattpocock/dictionary-of-ai-coding).
 
-Two document kinds are defined:
+Matt identifies the constraint that shapes a handoff: a new session starts with zero context and may have no return path to the old session. Everything the next session needs must be carried explicitly, and the artifact should be judged by what a zero-context agent can do with it.
 
-- `handoff`: the current complete context;
-- `handoff-response`: one receiver's `accepted`, `needs-info`, or `rejected` disposition toward one exact revision.
+handoffX extends that idea across owners and infrastructure: What if the receiver is another person's agent, on another platform, and needs to ask questions? What if B, C, and D consume the same handoff independently?
 
-The interaction semantics are:
+## What a handoff carries
 
-```text
-OFFER → REQUEST_INFO → REVISE → ACCEPT
-```
+A handoff is not a dump of the producer's memory. It contains the minimum context required to continue:
 
-A first offer can be accepted immediately. Clarification answers are merged into a new canonical revision; the chat transcript is never required to understand the final artifact.
+- objective and current state;
+- facts and evidence;
+- attempted actions and outcomes;
+- decisions, rationale, and prohibitions;
+- next actions and exit criteria;
+- unresolved questions and dependencies.
 
-## Install the reference CLI
+This is not chat summarization. It is a transfer of task responsibility.
 
-The protocol does not require this CLI. It is a reference producer, validator, and responder.
+## Try it as an Agent Skill
 
-```bash
-npm install -g github:ammend/handoffX
-# or clone this repository and run with Node.js 20+ / Bun 1.1+
-node src/cli.js --help
-```
-
-## Install the Agent Skill
-
-The repository includes a transport-independent `handoffx` skill for Agent environments that support the open skills directory format:
+Install the transport-independent `handoffx` skill in an Agent environment that supports the open skills directory format:
 
 ```bash
 npx skills add ammend/handoffX -y -g
 ```
 
-The skill can create and review handoffs with or without the CLI. It keeps installation optional for receivers and does not send artifacts unless the user separately authorizes delivery.
+Then tell your agent:
 
-## Create an offer
+```text
+Use handoffX to hand the current payment-latency investigation to agent-b.
+Keep facts, failed attempts, prohibitions, next actions, and exit criteria.
+Create a Markdown handoff that remains usable when I am offline.
+```
+
+The receiving agent can review it with:
+
+```text
+Use handoffX to review this handoff.
+Accept it if you can continue; otherwise ask only questions that block
+the next useful action or prevent a high-cost mistake.
+```
+
+The receiver does not need handoffX. It can read the Markdown and reply in natural language. The Skill makes the workflow more consistent; it is not a gate to the protocol.
+
+## Handoff is a negotiation
+
+```text
+OFFER → REQUEST_INFO → REVISE → ACCEPT
+```
+
+The producer offers a complete handoff. A receiver either accepts it or asks concrete questions. Answers are merged into a new, self-contained revision rather than left scattered through a chat transcript.
+
+One revision can be offered to B, C, D, or any number of receivers. Each responds independently to an exact handoff ID, revision, and SHA-256 digest. B accepting revision 2 does not imply that C accepted it.
+
+## Why Markdown?
+
+The most important property of a handoff is that it remains readable after leaving its original system.
+
+Markdown can travel through chat attachments, email, Git, issue trackers, filesystems, HTTP, shared whiteboards, MCP resources, or A2A artifacts. None is a dependency.
+
+Only the producer needs tooling. A receiver only needs to read Markdown.
+
+SHA-256 binds responses and revisions to exact file bytes, detecting version mismatch. It does not authenticate authors. Transport, permissions, signatures, discovery, and task orchestration remain outside the 0.1 core.
+
+## Reference CLI
+
+The Node.js/Bun CLI is a reference producer, validator, and responder for scripts, CI, and Agent frameworks. The protocol does not require it.
+
+```bash
+npm install -g github:ammend/handoffX#v0.1.1
+```
+
+Create a handoff:
 
 ```bash
 handoffx create \
   --title "Checkout latency investigation" \
   --producer "agent-a" \
   --audience "agent-b" \
-  --audience "agent-c" \
   --goal "Identify why P99 increased" \
   --summary "Service is available; incident unresolved" \
-  --source "Dashboard: https://observability.example/incidents/42" \
   --action "Scaled 4 to 8 instances; no improvement" \
   --decision "Do not restart the database without approval" \
   --next "Inspect long transactions after 16:00" \
-  --verify "Mitigation lowers P99 below 500 ms"
+  --verify "P99 remains below 500 ms for 30 minutes"
 ```
 
-The CLI writes `.handoff/<handoff-id>-r1.md` and prints its path.
-
-## Validate or inspect
+Validate and inspect:
 
 ```bash
 handoffx validate .handoff/<file>.md
@@ -93,34 +116,28 @@ handoffx list
 handoffx deps <handoff-id>
 ```
 
-## Respond independently
-
-Receiver B can accept:
-
-```bash
-handoffx accept handoff.md --as agent-b --note "Ready to continue"
-```
-
-Receiver C can request information:
+Respond or revise:
 
 ```bash
 handoffx respond handoff.md \
-  --as agent-c \
+  --as agent-b \
   --disposition needs-info \
   --question "Which role grants access to production metrics?"
-```
 
-Each command creates an immutable response artifact tied to the handoff ID, revision, and SHA-256 digest. A receiver without handoffX can simply read the Markdown and reply in natural language.
-
-## Create a revision
-
-Merge clarification answers into a complete Markdown body, then issue the next revision:
-
-```bash
+handoffx accept handoff.md --as agent-b --note "Ready to continue"
 handoffx revise handoff-r1.md --body updated-body.md
 ```
 
-The new artifact keeps the handoff ID, increments the revision, and records the prior file digest in `previous_sha256`.
+The CLI writes immutable response artifacts and complete revisions. Read the normative [handoffX 0.1 specification](SPEC.md) for metadata, state, revision, and conformance rules.
+
+## Protocol documents
+
+Version 0.1 defines two UTF-8 Markdown document kinds:
+
+- `handoff`: the current canonical context;
+- `handoff-response`: one receiver's `accepted`, `needs-info`, or `rejected` disposition toward one exact revision.
+
+Clarification answers belong in the next canonical handoff. The final artifact never requires replaying the negotiation transcript.
 
 ## Scope
 
@@ -132,8 +149,12 @@ Version 0.1 deliberately does not provide:
 - identity authentication or digital signatures;
 - automatic memory, Git, log, or environment collection.
 
-A2A, MCP, chat systems, or application-specific adapters can carry handoffX documents without changing the protocol.
+A2A, MCP, chat systems, shared whiteboards, and application-specific adapters can carry handoffX without changing the protocol.
 
 ## Open source
 
 handoffX is licensed under Apache-2.0. Protocol evolution and implementation contributions are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+The real test is simple: give your most important work to an agent with zero chat history. If it can continue, the handoff worked. If it asks a blocking question, merge the answer into a new revision.
+
+The best handoff is not the longest one. It is the one that lets the next agent move.
